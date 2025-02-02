@@ -1,0 +1,41 @@
+FROM python:3.12
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONPATH="/venv/dependencies"
+
+ARG USER=pc
+ARG UID=1998
+ARG GID=1998
+
+RUN apt-get update \
+    && groupadd -g $GID $USER && useradd -s /bin/bash -u $UID -g $GID -m $USER \
+    \
+    && mkdir -p /etc/sudoers.d/ \
+    && echo "$USER ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$USER \
+    && chmod 0440 /etc/sudoers.d/$USER \
+	&& mkdir -p /builds/app \
+	&& mkdir -p /builds/sqlite_data
+
+COPY app /builds/app/
+COPY sqlite_data /builds/sqlite_data
+
+RUN chown -R $UID.$GID /builds \
+    && pip install --upgrade -r /builds/app/requirements.txt \
+    && rm -f /builds/app/*.txt \
+    \
+    && find /usr/local -depth \
+		\( \
+			\( -type d -a \( -name tests -o -name idle_test \) \) \
+			-o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name '*.a' \) \) \
+		\) -exec rm -rf '{}' + \
+	\
+    && find / -type d -name __pycache__ -prune -exec rm -rf {} \; \
+    && rm -rf ~/.cache/pip \
+    && apt-get remove --purge -yq \gpg \
+    && apt-get remove --purge --auto-remove systemd --allow-remove-essential -y \
+    && apt-get clean -y \
+    && rm -rf /tmp/* /var/tmp/* /var/lib/apt/archive/* /var/lib/apt/lists/*
+
+USER $USER
+WORKDIR /builds/app
+ENTRYPOINT ["uvicorn", "entry:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]

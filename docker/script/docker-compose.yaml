@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  fastapi-hr-vacancies-task:
+    build:
+      context: ../../docker
+      dockerfile: ./script/Dockerfile.fastapi
+    container_name: fastapi-hr-vacancies-task
+    image: fastapi-hr-vacancies:latest
+    user: 1998:1998
+    environment:
+      - DATABASE_PATH=sqlite:///../sqlite_data/fast_api.db
+    volumes:
+      - ../sqlite_data:/builds/sqlite_data
+    ports:
+      - "8001:8001"
+    restart: always
+
+volumes:
+  sqlite_data:
