@@ -27,6 +27,7 @@
 - ### *[ U ] pdate*
 - ### *[ D ] elete*
 
+<br>
 
 ## *B.　How To Use*
 ### *Directory Structure Diagram*
@@ -71,6 +72,8 @@ uvicorn entry:app --reload --port 8000
 http://127.0.0.1:8000/docs
 ```
 
+<br>
+
 ## *C.　Dockerization*
 ### *STEP.1　Enter `docker` path*
 ```bash
@@ -96,6 +99,8 @@ docker compose --file script/docker-compose.yaml up -d
 ```bash
 docker ps -a
 ```
+
+<br>
 
 ## *D.　Reference*
 -  ### [[Day7] 簡單搞懂Restful API Python 實作範例](https://ithelp.ithome.com.tw/m/articles/10295371)
