@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  fastapi-hr-vacancies-task:
+    build:
+      context: ../../docker
+      dockerfile: ./script/Dockerfile.fastapi
+    container_name: fastapi-hr-vacancies-task
+    image: fastapi-hr-vacancies:latest
+    environment:
+      - DATABASE_URL=sqlite:///builds/app/sqlite_data/test.db  # SQLite 資料庫路徑
+    volumes:
+      - ../sqlite_data:/app/sqlite_data  # 綁定 SQLite 資料夾
+    ports:
+      - "8000:8000"  # 映射 FastAPI 服務端口
+    restart: always
+
+volumes:
+  sqlite_data:
